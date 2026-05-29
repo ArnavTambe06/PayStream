@@ -5,6 +5,9 @@ import com.paystream.api.entity.Wallet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import org.springframework.data.jpa.repository.Lock;
+import jakarta.persistence.LockModeType;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,4 +19,8 @@ public interface WalletRepository extends JpaRepository<Wallet, UUID> {
 
     @Query("SELECT w FROM Wallet w WHERE w.user.id = :userId AND w.isActive = true")
     List<Wallet> findActiveWalletsByUserId(UUID userId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT w FROM Wallet w WHERE w.id = :id")
+    Optional<Wallet> findByIdWithLock(UUID id);
 }
