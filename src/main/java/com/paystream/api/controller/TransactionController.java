@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.UUID;
 
@@ -53,7 +54,10 @@ public class TransactionController {
     public ResponseEntity<ApiResponse<Page<TransactionResponse>>> getWalletHistory(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable UUID walletId,
-            @PageableDefault(size = 10, sort = "createdAt") Pageable pageable) {
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(ApiResponse.success("Transaction history fetched",
                 transactionService.getWalletHistory(
                         userDetails.getUsername(), walletId, pageable)));

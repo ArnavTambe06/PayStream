@@ -16,10 +16,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
     Optional<Transaction> findByIdempotencyKey(String idempotencyKey);
 
     @Query("""
-        SELECT t FROM Transaction t
-        WHERE (t.fromWallet.id = :walletId OR t.toWallet.id = :walletId)
-        ORDER BY t.createdAt DESC
-        """)
+    SELECT t FROM Transaction t
+    WHERE (t.fromWallet.id = :walletId OR t.toWallet.id = :walletId)
+    ORDER BY t.createdAt DESC
+    """)
     Page<Transaction> findByWalletId(UUID walletId, Pageable pageable);
 
     @Query("""
