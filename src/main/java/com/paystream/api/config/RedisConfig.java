@@ -21,37 +21,19 @@ import java.util.Map;
 public class RedisConfig {
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(
-            RedisConnectionFactory factory) {
-
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(factory);
-
-        // Use String keys
         template.setKeySerializer(new StringRedisSerializer());
         template.setHashKeySerializer(new StringRedisSerializer());
-
-        // Use JSON for values (readable + type-safe)
-        Jackson2JsonRedisSerializer<Object> jsonSerializer =
-                new Jackson2JsonRedisSerializer<>(objectMapper(), Object.class);
-
-        template.setValueSerializer(jsonSerializer);
-        template.setHashValueSerializer(jsonSerializer);
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer(redisObjectMapper()));
+        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer(redisObjectMapper()));
         template.afterPropertiesSet();
         return template;
     }
 
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory factory) {
-        ObjectMapper mapper = objectMapper();
-        mapper.activateDefaultTyping(
-                mapper.getPolymorphicTypeValidator(),
-                ObjectMapper.DefaultTyping.NON_FINAL
-        );
-
-        Jackson2JsonRedisSerializer<Object> jsonSerializer =
-                new Jackson2JsonRedisSerializer<>(mapper, Object.class);
-
         RedisCacheConfiguration defaultConfig = RedisCacheConfiguration
                 .defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(10))
@@ -60,15 +42,14 @@ public class RedisConfig {
                                 .fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(
                         RedisSerializationContext.SerializationPair
-                                .fromSerializer(jsonSerializer))
+                                .fromSerializer(new GenericJackson2JsonRedisSerializer(redisObjectMapper())))
                 .disableCachingNullValues();
 
-        // Per-cache TTL overrides
         Map<String, RedisCacheConfiguration> cacheConfigs = Map.of(
-                "wallets",       defaultConfig.entryTtl(Duration.ofMinutes(5)),
-                "userProfile",   defaultConfig.entryTtl(Duration.ofMinutes(15)),
-                "transactions",  defaultConfig.entryTtl(Duration.ofMinutes(2)),
-                "adminStats",    defaultConfig.entryTtl(Duration.ofMinutes(1))
+                "wallets",      defaultConfig.entryTtl(Duration.ofMinutes(5)),
+                "userProfile",  defaultConfig.entryTtl(Duration.ofMinutes(15)),
+                "transactions", defaultConfig.entryTtl(Duration.ofMinutes(2)),
+                "adminStats",   defaultConfig.entryTtl(Duration.ofMinutes(1))
         );
 
         return RedisCacheManager.builder(factory)
@@ -77,11 +58,11 @@ public class RedisConfig {
                 .build();
     }
 
-    @Bean
-    public ObjectMapper objectMapper() {
+    private ObjectMapper redisObjectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        // NO activateDefaultTyping — this was causing all the issues
         return mapper;
     }
 }

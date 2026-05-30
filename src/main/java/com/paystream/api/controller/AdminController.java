@@ -9,13 +9,14 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.data.domain.PageRequest;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")   // ← entire controller locked to ADMIN
+
 public class AdminController {
 
     private final AdminService adminService;
@@ -33,9 +34,10 @@ public class AdminController {
 
     @GetMapping("/users")
     public ResponseEntity<ApiResponse<Page<AdminUserResponse>>> getAllUsers(
-            @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.success(
-                "Users fetched",
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(ApiResponse.success("Users fetched",
                 adminService.getAllUsers(pageable)));
     }
 
@@ -67,37 +69,43 @@ public class AdminController {
 
     @GetMapping("/transactions")
     public ResponseEntity<ApiResponse<Page<TransactionResponse>>> getAllTransactions(
-            @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.success(
-                "Transactions fetched",
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(ApiResponse.success("Transactions fetched",
                 adminService.getAllTransactions(pageable)));
     }
+
 
     @GetMapping("/transactions/user/{userId}")
     public ResponseEntity<ApiResponse<Page<TransactionResponse>>> getUserTransactions(
             @PathVariable UUID userId,
-            @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.success(
-                "User transactions fetched",
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(ApiResponse.success("User transactions fetched",
                 adminService.getTransactionsByUser(userId, pageable)));
     }
 
     // ── Audit Logs ────────────────────────────────────────────────────────
 
+
     @GetMapping("/audit-logs")
     public ResponseEntity<ApiResponse<Page<AuditLogResponse>>> getAllAuditLogs(
-            @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.success(
-                "Audit logs fetched",
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(ApiResponse.success("Audit logs fetched",
                 adminService.getAllAuditLogs(pageable)));
     }
 
     @GetMapping("/audit-logs/user/{userId}")
     public ResponseEntity<ApiResponse<Page<AuditLogResponse>>> getUserAuditLogs(
             @PathVariable UUID userId,
-            @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.success(
-                "User audit logs fetched",
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(ApiResponse.success("User audit logs fetched",
                 adminService.getAuditLogsByUser(userId, pageable)));
     }
 }

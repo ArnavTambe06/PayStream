@@ -15,6 +15,8 @@ import java.util.UUID;
 
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
 
+
+
     Optional<Transaction> findByIdempotencyKey(String idempotencyKey);
 
     @Query("""
@@ -34,7 +36,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
             UUID userId, LocalDateTime from, LocalDateTime to, Pageable pageable);
 
 
-    @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.status = 'SUCCESS'")
+    @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t " +
+            "WHERE t.status = com.paystream.api.entity.TransactionStatus.SUCCESS")
     BigDecimal sumSuccessfulTransactionAmounts();
 
 

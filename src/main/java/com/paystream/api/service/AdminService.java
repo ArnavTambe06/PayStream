@@ -27,6 +27,7 @@ public class AdminService {
     private final PaymentRequestRepository paymentRequestRepository;
     private final CacheService          cacheService;
 
+
     // ─── DASHBOARD STATS ─────────────────────────────────────────────────
 
     @Cacheable(value = "adminStats", key = "'dashboard'")
@@ -130,12 +131,11 @@ public class AdminService {
     // ─── AUDIT LOGS ──────────────────────────────────────────────────────
 
     public Page<AuditLogResponse> getAllAuditLogs(Pageable pageable) {
-        return auditLogRepository.findAll(pageable)
+        return auditLogRepository.findAllWithUser(pageable)
                 .map(this::toAuditLogResponse);
     }
 
-    public Page<AuditLogResponse> getAuditLogsByUser(
-            UUID userId, Pageable pageable) {
+    public Page<AuditLogResponse> getAuditLogsByUser(UUID userId, Pageable pageable) {
         return auditLogRepository.findByUserId(userId, pageable)
                 .map(this::toAuditLogResponse);
     }
@@ -172,10 +172,19 @@ public class AdminService {
     }
 
     private AuditLogResponse toAuditLogResponse(AuditLog log) {
+        String userEmail = "system";
+        try {
+            if (log.getUser() != null) {
+                userEmail = log.getUser().getEmail();
+            }
+        } catch (Exception e) {
+            // Lazy proxy not initialized — use fallback
+            userEmail = "unknown";
+        }
+
         return AuditLogResponse.builder()
                 .id(log.getId())
-                .userEmail(log.getUser() != null
-                        ? log.getUser().getEmail() : "system")
+                .userEmail(userEmail)
                 .action(log.getAction())
                 .entityType(log.getEntityType())
                 .entityId(log.getEntityId())
