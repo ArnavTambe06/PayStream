@@ -1,0 +1,64 @@
+# App
+spring.application.name=paystream-api
+server.port=8080
+
+# PostgreSQL (Neon.tech)
+# Get from: https://console.neon.tech → your project → Connection Details
+spring.datasource.url=jdbc:postgresql://<your-neon-host>/neondb?sslmode=require&options=endpoint%3D<endpoint-id>
+spring.datasource.username=<your-neon-username>
+spring.datasource.password=<your-neon-password>
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# JPA / Hibernate
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.show-sql=false
+spring.jpa.open-in-view=false
+spring.jpa.properties.hibernate.format_sql=true
+
+# Flyway
+spring.flyway.enabled=true
+spring.flyway.locations=classpath:db/migration
+
+# Redis (Upstash)
+# Get from: https://console.upstash.com → your database → Redis URL
+spring.data.redis.url=rediss://default:<your-password>@<your-host>:6380
+spring.data.redis.ssl.enabled=true
+
+# JWT
+# Generate a random 256-bit secret: https://generate-secret.vercel.app/64
+jwt.secret=<minimum-256-bit-secret-key>
+jwt.expiration=86400000
+jwt.refresh-expiration=604800000
+
+# Swagger
+springdoc.api-docs.path=/api-docs
+springdoc.swagger-ui.path=/swagger-ui.html
+springdoc.swagger-ui.operationsSorter=method
+springdoc.packages-to-scan=com.paystream.api.controller
+
+# Actuator
+management.endpoints.web.exposure.include=health,info,metrics
+management.health.circuitbreakers.enabled=true
+management.endpoint.health.show-details=always
+
+# Admin Seed
+app.admin.email=admin@paystream.com
+app.admin.password=<your-admin-password>
+app.admin.name=PayStream Admin
+
+# Resilience4j Circuit Breaker
+resilience4j.circuitbreaker.instances.razorgate.sliding-window-size=10
+resilience4j.circuitbreaker.instances.razorgate.failure-rate-threshold=50
+resilience4j.circuitbreaker.instances.razorgate.wait-duration-in-open-state=10s
+resilience4j.circuitbreaker.instances.razorgate.permitted-calls-in-half-open-state=3
+resilience4j.circuitbreaker.instances.razorgate.automatic-transition-from-open-to-half-open-enabled=true
+
+# Resilience4j Retry
+resilience4j.retry.instances.razorgate.max-attempts=3
+resilience4j.retry.instances.razorgate.wait-duration=500ms
+resilience4j.retry.instances.razorgate.retry-exceptions=java.io.IOException,java.util.concurrent.TimeoutException
+
+# Resilience4j Rate Limiter
+resilience4j.ratelimiter.instances.paymentApi.limit-for-period=20
+resilience4j.ratelimiter.instances.paymentApi.limit-refresh-period=1s
+resilience4j.ratelimiter.instances.paymentApi.timeout-duration=0s
