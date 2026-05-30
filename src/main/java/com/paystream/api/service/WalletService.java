@@ -1,5 +1,6 @@
 package com.paystream.api.service;
 
+import ch.qos.logback.classic.Logger;
 import com.paystream.api.dto.response.WalletResponse;
 import com.paystream.api.entity.AccountType;
 import com.paystream.api.entity.User;
@@ -11,18 +12,26 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class WalletService {
 
     private final WalletRepository walletRepository;
     private final UserRepository userRepository;
+    private final CacheService cacheService;
 
+    @Cacheable(value = "wallets", key = "#email")
     public List<WalletResponse> getMyWallets(String email) {
+        log.info("Cache MISS — loading wallets for {}", email);
         User user = getUserByEmail(email);
         return walletRepository.findActiveWalletsByUserId(user.getId())
                 .stream()
@@ -31,6 +40,7 @@ public class WalletService {
     }
 
     @Transactional
+    @CacheEvict(value = "wallets", key = "#email")
     public WalletResponse createWallet(String email, AccountType accountType) {
         User user = getUserByEmail(email);
 

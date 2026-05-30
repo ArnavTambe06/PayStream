@@ -38,6 +38,8 @@ public class TransactionService {
     private final AuditLogRepository    auditLogRepository;
     private final UserRepository        userRepository;
 
+    private final CacheService cacheService;
+
     // ─── DEPOSIT ────────────────────────────────────────────────────────────
 
     @Transactional
@@ -109,6 +111,7 @@ public class TransactionService {
         saveAuditLog(user, "DEPOSIT", "TRANSACTION", txn.getId().toString(),
                 "Deposited ₹" + request.getAmount() + " to wallet " + wallet.getId());
 
+        cacheService.evictWalletCache(wallet.getId());
         log.info("Deposit successful: {} → wallet {}", txn.getReferenceId(), wallet.getId());
         return toResponse(txn);
     }
@@ -175,6 +178,7 @@ public class TransactionService {
         saveAuditLog(user, "WITHDRAWAL", "TRANSACTION", txn.getId().toString(),
                 "Withdrew ₹" + request.getAmount() + " from wallet " + wallet.getId());
 
+        cacheService.evictWalletCache(wallet.getId());
         return toResponse(txn);
     }
 
@@ -266,6 +270,9 @@ public class TransactionService {
                 "Transferred ₹" + request.getAmount()
                         + " from " + fromWallet.getId()
                         + " to " + toWallet.getId());
+
+        cacheService.evictWalletCache(fromWallet.getId());
+        cacheService.evictWalletCache(toWallet.getId());
 
         log.info("Transfer successful: {} ₹{} from {} to {}",
                 txn.getReferenceId(), request.getAmount(),
