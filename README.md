@@ -17,6 +17,10 @@ PayStream is a **production-grade banking and payment orchestration API** demons
 
 Designed for **BFSI/Fintech backend roles** in the Indian job market.
 
+## Frontend
+The React dashboard for this API is at:
+👉 https://github.com/ArnavTambe06/paystream-ui
+
 ### What Makes This Different from a Typical CRUD App
 
 | Pattern | Implementation |
