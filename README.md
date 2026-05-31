@@ -90,7 +90,7 @@ Spring Boot 3.5 (Railway)
 - Flyway DB migrations (V1, V2)
 - Swagger/OpenAPI documentation
 
-### ⏳ Phase 2 — Transaction Engine (In Progress)
+### ✅ Phase 2 — Transaction Engine (In Progress)
 - Deposit, withdraw, P2P transfer
 - Double-entry ledger (every debit paired with a credit)
 - `@Transactional` with pessimistic locking (`SELECT FOR UPDATE`)
@@ -99,7 +99,7 @@ Spring Boot 3.5 (Railway)
 - Fraud checks (amount limits per operation type)
 - Transaction history with pagination
 
-### ⏳ Phase 3 — Payment Gateway Orchestration
+### ✅ Phase 3 — Payment Gateway Orchestration
 - Mock payment providers (RazorGate primary, StripeGate fallback)
 - Circuit breaker — CLOSED → OPEN → HALF-OPEN state machine
 - Retry with exponential backoff (3 attempts)
@@ -107,7 +107,7 @@ Spring Boot 3.5 (Railway)
 - Idempotency keys for all payment requests
 - Live circuit breaker health via `/actuator/health`
 
-### ⏳ Phase 4 — Redis + Admin APIs
+### ✅ Phase 4 — Redis + Admin APIs
 - Redis caching with per-cache TTL overrides
 - Explicit cache eviction on balance changes
 - Rate limiting — 60 req/min per user (Redis token bucket)
@@ -116,7 +116,7 @@ Spring Boot 3.5 (Railway)
 - Full audit log access
 - All admin routes locked to `ROLE_ADMIN`
 
-### ⏳ Phase 5 — React Frontend
+### ✅ Phase 5 — React Frontend
 - Login + Register pages
 - Wallet dashboard with balance
 - Send money form
@@ -124,7 +124,7 @@ Spring Boot 3.5 (Railway)
 - Admin panel
 - Deployed to Vercel
 
-### ⏳ Phase 6 — DevOps
+### ✅ Phase 6 — DevOps
 - Docker + Docker Compose
 - GitHub Actions CI/CD
 - Railway deployment (backend)
