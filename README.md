@@ -453,11 +453,11 @@ src/main/resources/
 ## 🗺️ Roadmap
 
 - [x] Phase 1 — Auth + JWT + Wallets
-- [ ] Phase 2 — Transaction engine (deposit, withdraw, transfer)
-- [ ] Phase 3 — Payment gateway orchestration + circuit breaker
-- [ ] Phase 4 — Redis caching + rate limiting + admin APIs
-- [ ] Phase 5 — React frontend (Vercel)
-- [ ] Phase 6 — Docker + CI/CD + Railway deploy
+- [x] Phase 2 — Transaction engine (deposit, withdraw, transfer)
+- [x] Phase 3 — Payment gateway orchestration + circuit breaker
+- [x] Phase 4 — Redis caching + rate limiting + admin APIs
+- [x] Phase 5 — React frontend (Vercel)
+- [x] Phase 6 — Docker + CI/CD + Railway deploy
 
 ---
 
@@ -486,14 +486,5 @@ src/main/resources/
 - LinkedIn: [arnavtambe06](https://linkedin.com/in/arnavtambe06)
 - GitHub: [ArnavTambe06](https://github.com/ArnavTambe06)
 - Email: arnavtambe01@gmail.com
-- Portfolio: [localhost:3000](http://localhost:3000) ← update with live URL
-
----
-
-## 📄 License
-
-MIT License — feel free to fork, extend, and learn from it.
-
----
 
 *Built phase by phase. Every pattern intentional. Every decision explainable.*
